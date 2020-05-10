@@ -41,7 +41,7 @@ profissional.init(app);
 tabela.init(app);
 usuarios.init(app);
 
-//Quanto não encontrar rota
+//Quanto não encontrar nenhuma rota
 app.use((req, res, next) => {
     const err = new Error('Não encontrado');
     err.status = 404;
