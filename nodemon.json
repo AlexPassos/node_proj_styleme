@@ -1,0 +1,11 @@
+{
+    "env": {
+        "PG_USER" : "nsolucoe_usermedpag",
+        "PG_PASSWORD" : "[a23p10r78]*",
+        "PG_DATABASE" : "nsolucoe_medpag",
+        "PG_HOST": "jdbc:postgresql://localhost:5432/nsolucoe_medpag",
+        "PG_PORT" : 5432,
+
+        "JWT_KEY": "z12a34q56-w65s43x21"
+    }
+}
