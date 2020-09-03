@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
     })
     Tabela.associate = function (model) {
         Tabela.belongsTo(model.Profissional, { targetKey: 'id', foreignKey: 'idprofissional' })
+        Tabela.belongsToMany(model.Agendaservicos, {
+            through: 'agendaservicos',
+            foreignKey: 'idtabela'            
+        });
     }
 
     return Tabela

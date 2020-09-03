@@ -3,4 +3,7 @@ global.EMAIL_TMPL = '{0}';
 
 module.exports = {
     sendgridKey: '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',
+    emailSMTP : 'mail.nsolucoesemti.com.br',
+    emailREM : 'alexpassos@nsolucoesemti.com.br',
+    emailPASS : '[xela2310]*',
 }

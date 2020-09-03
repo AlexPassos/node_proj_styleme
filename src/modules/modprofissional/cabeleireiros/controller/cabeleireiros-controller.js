@@ -29,7 +29,7 @@ exports.saveCabeleireiros = async (req, res, next) => {
     var sequelize = model.sequelize;
 
     const { nome, salao, email, idestado, idcidade, usuario, senha, situacao, nivel, codigo, cabelo, barba } = req.body;
-    const acesso = false;
+    const acesso = true;
     const pendente = true;
     const pj = 1;
 
@@ -153,7 +153,6 @@ exports.deleteCabeleireiros = async (req, res, next) => {
     var sequelize = model.sequelize;
 
     const id = req.body.id;
-    console.log(id);
 
     let transacao;
 

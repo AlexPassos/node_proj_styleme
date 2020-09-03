@@ -14,6 +14,7 @@ npm install sendgrid@2.0.0 --save
 npm install moment --save
 npm install sequelize --save
 npm install pg-hstore --save
+npm install nodemailer --save
 
 parei na aula 33
 

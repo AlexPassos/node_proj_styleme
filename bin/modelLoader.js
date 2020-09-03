@@ -16,6 +16,7 @@ const models = [
     '../src/modules/cidades/model/cidades-model',
     '../src/modules/registros/model/registros-model',
     '../src/modules/modprofissional/agenda/model/agenda-model',
+    '../src/modules/modprofissional/agendaservicos/model/agendaservicos-model',
     '../src/modules/modprofissional/cabeleireiros/model/cabeleireiros-model',
     '../src/modules/modprofissional/profissional/model/profissional-model',
     '../src/modules/modprofissional/tabela/model/tabela-model',

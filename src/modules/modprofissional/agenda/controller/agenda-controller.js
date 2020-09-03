@@ -67,6 +67,13 @@ exports.getAgendaDatas = (req, res) => {
             [sequelize.fn('max', sequelize.col('datacons')), 'datacons'],
             [sequelize.fn('max', sequelize.col('status')), 'status'],
             [sequelize.fn('bool_or', sequelize.col('situacao')), 'situacao'],
+            [sequelize.fn('bool_or', sequelize.col('cabelo')), 'cabelo'],
+            [sequelize.fn('bool_or', sequelize.col('barba')), 'barba'],          
+            [sequelize.fn('max', sequelize.col('desconto')), 'desconto'],
+            [sequelize.fn('max', sequelize.col('valorcabelo')), 'valorcabelo'],
+            [sequelize.fn('max', sequelize.col('valorbarba')), 'valorbarba'],
+            [sequelize.fn('max', sequelize.col('total')), 'total'],
+            [sequelize.fn('bool_or', sequelize.col('caixa')), 'caixa'],     
 
             // [
             //     sequelize.literal(`(select count(id) from agenda where agenda.idprofissional=${id} 
@@ -93,6 +100,9 @@ exports.getAgendaHorarios = (req, res) => {
     const data = req.params.data;
 
     model.Agenda.findAll({
+        include: [
+            { model: model.Usuarios },         
+        ],
         where: {
             idprofissional: id,
             data: data
@@ -100,7 +110,7 @@ exports.getAgendaHorarios = (req, res) => {
         order: ['horario'],
     }).then((dados) => {
 
-        res.send(dados);
+        res.send(dados);        
 
     }).catch((error) => {
         console.log(error);
@@ -171,12 +181,16 @@ exports.agendaStatus = async (req, res) => {
                     "idusuario": null,
                     "nome": '',
                     "status": status,
-                    "situacao": true
+                    "situacao": true,
+                    "cabelo": false,
+                    "barba":false
                 }
             } else {
                 dados = {
                     "status": status,
-                    "situacao": false
+                    "situacao": false,
+                    "cabelo": false,
+                    "barba":false
                 }
             }
 
@@ -199,6 +213,225 @@ exports.agendaStatus = async (req, res) => {
         if (transacao) await transacao.rollback();
         //console.log(e);
         return res.send('Falha ao gerar horários.');
+    }
+
+};
+
+exports.salvarAgenda = async (req, res) => {
+    var sequelize = model.sequelize;
+
+    const { idagenda,cadusuario,idusuario,nome,status,situacao,cabelo,barba } = req.body;
+
+    let transacao;
+
+    try {
+        transacao = await sequelize.transaction(async (tr) => {
+
+            let dados;   
+            if(idusuario == 0){
+                dados = {
+                    "cadusuario": cadusuario,                    
+                    "nome": nome,
+                    "status": status,
+                    "situacao": situacao,
+                    "cabelo":cabelo,
+                    "barba":barba
+                }        
+            }   else {
+                dados = {
+                    "cadusuario": cadusuario,
+                    "idusuario": idusuario,
+                    "nome": nome,
+                    "status": status,
+                    "situacao": situacao,
+                    "cabelo":cabelo,
+                    "barba":barba
+                }        
+            }        
+
+            //salva na tabela agenda
+            await model.Agenda.update(dados, {
+                where: {
+                    id: idagenda
+                }
+            }, { transaction: tr });
+
+        }).then(r => {
+            //console.log(r);
+        }).catch(err => {
+            //console.log(err);
+        });
+
+        return res.send('Status atualizado com sucesso!');
+
+    } catch (e) {
+        if (transacao) await transacao.rollback();
+        //console.log(e);
+        return res.send('Falha ao gerar horários.');
+    }
+
+};
+
+exports.fecharAgenda = async (req, res) => {
+    var sequelize = model.sequelize;
+
+    const { idagenda,status,desconto,valorcabelo,valorbarba,total } = req.body;
+
+    let transacao;
+
+    try {
+        transacao = await sequelize.transaction(async (tr) => {
+
+            let dados;               
+            dados = {             
+                "status": status,
+                "desconto": desconto,
+                "valorcabelo": valorcabelo,
+                "valorbarba": valorbarba,
+                "total": total
+            }        
+
+            //salva na tabela agenda
+            await model.Agenda.update(dados, {
+                where: {
+                    id: idagenda
+                }
+            }, { transaction: tr });
+
+        }).then(r => {
+            //console.log(r);
+        }).catch(err => {
+            //console.log(err);
+        });
+
+        return res.send('Status atualizado com sucesso!');
+
+    } catch (e) {
+        if (transacao) await transacao.rollback();
+        //console.log(e);
+        return res.send('Falha ao gerar horários.');
+    }
+
+};
+
+exports.fecharCaixa = async (req, res) => {
+    var sequelize = model.sequelize;
+
+    const { idprofissional,data } = req.body;
+
+    let transacao;
+
+    try {
+        transacao = await sequelize.transaction(async (tr) => {
+
+            let dados;               
+            dados = {             
+                "caixa": false,               
+            }        
+
+            //salva na tabela agenda
+            await model.Agenda.update(dados, {
+                where: {
+                    idprofissional: idprofissional,
+                    data: data
+                }
+            }, { transaction: tr });
+
+        }).then(r => {
+            //console.log(r);
+        }).catch(err => {
+            //console.log(err);
+        });
+
+        return res.send('Caixa fechado com sucesso!');
+
+    } catch (e) {
+        if (transacao) await transacao.rollback();
+        //console.log(e);
+        return res.send('Falha ao gerar horários.');
+    }
+
+};
+
+exports.getCaixa = (req, res) => {
+    
+    const id = req.params.id;
+    const data = req.params.data;
+
+    model.Agenda.findAll({
+      
+        include: [
+            { model: model.Usuarios },         
+        ],
+        where: {
+            idprofissional: id,
+            data: data,
+            status: 4
+        },
+        order: ['horario'],
+    }).then((dados) => {
+
+        res.send(dados);        
+
+    }).catch((error) => {
+        console.log(error);
+        res.send(error);
+    });
+};
+
+exports.getTotal = (req, res) => {
+    var sequelize = model.sequelize;
+
+    const id = req.params.id;
+    const data = req.params.data;
+
+    model.Agenda.findAll({
+        attributes: [[sequelize.fn('sum', sequelize.col('total')), 'totalgeral']],
+        where: {
+            idprofissional: id,
+            data: data,
+            status: 4
+        },
+    }).then((data) => {
+
+        res.send(data);
+
+    }).catch((error) => {
+        console.log(error);
+        res.send(error);
+    });
+};
+
+exports.deleteHorarios = async (req, res, next) => {
+    var sequelize = model.sequelize;
+
+    const id = req.params.id;
+    const data = req.params.data;
+
+    let transacao;
+
+    try {
+        transacao = await sequelize.transaction(async (t) => {
+
+            //Deleta na tabela agenda
+            await model.Agenda.destroy({ where: 
+                { 
+                    idprofissional: id,
+                    data: data,
+                    situacao: true 
+                } }, { transaction: t });
+
+        }).then(r => {
+            //console.log(r);
+        }).catch(err => {
+            //console.log(err);
+        });
+
+        return res.send('Removido com sucesso!');
+    } catch (e) {
+        if (transacao) await transacao.rollback();
+        //console.log(e);
+        return res.send('Falha no cadastro');
     }
 
 };

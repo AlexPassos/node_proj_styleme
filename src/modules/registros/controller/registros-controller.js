@@ -24,6 +24,14 @@ exports.postEmailValidacao = async (req, res, next) => {
 
         const { nome, codigo, email } = req.body;
 
+        var emailTexto = `<img src="http://www.nsolucoesemti.com.br/styleme/logocolor.png" 
+            alt="logo-styleme" height="101" width="200">
+            <br/><br/>
+            Olá, <strong>${nome}</strong>, 
+            seja bem vindo ao Style Me!
+            <br><br/>
+            Seu código de validação é: <strong>${codigo}</strong>`;
+
         var emailBody = `<img src="http://www.nsolucoesemti.com.br/styleme/logocolor.png" 
                         alt="logo-styleme" height="101" width="200">
                     <br/><br/>
@@ -32,10 +40,8 @@ exports.postEmailValidacao = async (req, res, next) => {
                     <br/><br/>
                     Seu código de validação é: <strong>${codigo}</strong>`;
 
-        emailService.send(
-            email,
-            'Bem vindo ao Style Me',
-            global.EMAIL_TMPL.replace('{0}', emailBody));
+            let assunto = 'Style Me - Código de validação';
+            emailService.enviarEmail(email, assunto,  emailTexto, emailBody);
 
         res.status(201).send({ message: 'E-mail enviado com sucesso' });
 
