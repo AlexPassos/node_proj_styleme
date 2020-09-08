@@ -118,6 +118,35 @@ exports.getAgendaHorarios = (req, res) => {
     });
 };
 
+exports.getAgendamentos = (req, res) => {
+
+    const id = req.params.id;
+
+    var inicialData = dataInicialFormatada();
+    var finalData = dataFinalFormatada();
+
+    model.Agenda.findAll({
+        include: [
+            { model: model.Usuarios },         
+            { model: model.Profissional },         
+        ],
+        where: {
+            idusuario: id,        
+            data:{
+                '$between': [inicialData, finalData]
+            }    
+        },
+        order: ['horario'],
+    }).then((dados) => {
+
+        res.send(dados);        
+
+    }).catch((error) => {
+        console.log(error);
+        res.send(error);
+    });
+};
+
 exports.getDisponivel = (req, res) => {
     var sequelize = model.sequelize;
 
@@ -167,7 +196,7 @@ exports.getOcupado = (req, res) => {
 exports.agendaStatus = async (req, res) => {
     var sequelize = model.sequelize;
 
-    const { id, status } = req.body;
+    const { id, status,idusuario } = req.body;
 
     let transacao;
 
@@ -183,8 +212,25 @@ exports.agendaStatus = async (req, res) => {
                     "status": status,
                     "situacao": true,
                     "cabelo": false,
-                    "barba":false
+                    "barba":false,
+                    "desconto": 0,
+                    "valorcabelo":0,
+                    "valorbarba":0,
+                    "total":0
                 }
+
+                let dadosHistorico = {
+                    "status": 5,                  
+                }
+
+                //salva na tabela historico
+                await model.Historico.update(dadosHistorico, {
+                    where: {
+                        idusuario: idusuario,
+                        idagenda: id
+                    }
+                }, { transaction: tr });
+
             } else {
                 dados = {
                     "status": status,
@@ -192,6 +238,8 @@ exports.agendaStatus = async (req, res) => {
                     "cabelo": false,
                     "barba":false
                 }
+
+             
             }
 
             //salva na tabela agenda
@@ -220,7 +268,8 @@ exports.agendaStatus = async (req, res) => {
 exports.salvarAgenda = async (req, res) => {
     var sequelize = model.sequelize;
 
-    const { idagenda,cadusuario,idusuario,nome,status,situacao,cabelo,barba } = req.body;
+    const { idagenda,cadusuario,idusuario,nome,status,situacao,cabelo,barba,
+        valorcabelo,valorbarba,total,agendar } = req.body;
 
     let transacao;
 
@@ -235,7 +284,10 @@ exports.salvarAgenda = async (req, res) => {
                     "status": status,
                     "situacao": situacao,
                     "cabelo":cabelo,
-                    "barba":barba
+                    "barba":barba,
+                    "valorcabelo": valorcabelo,
+                    "valorbarba": valorbarba,
+                    "total": total
                 }        
             }   else {
                 dados = {
@@ -245,8 +297,34 @@ exports.salvarAgenda = async (req, res) => {
                     "status": status,
                     "situacao": situacao,
                     "cabelo":cabelo,
-                    "barba":barba
+                    "barba":barba,
+                    "valorcabelo": valorcabelo,
+                    "valorbarba": valorbarba,
+                    "total": total
                 }        
+
+               let dadosHistorico =  {                    
+                    "idusuario": idusuario,                    
+                    "status": status,
+                    "situacao": situacao,
+                    "cabelo":cabelo,
+                    "barba":barba,
+                    "valorcabelo": valorcabelo,
+                    "valorbarba": valorbarba,
+                    "total": total,
+                    "idagenda": idagenda
+                 }        
+                //Salva na tabela historico
+                if (agendar == 0){
+                    await model.Historico.create(dadosHistorico, { transaction: tr });
+                } else {
+                    await model.Historico.update(dadosHistorico, {
+                        where: {
+                            idusuario: idusuario,
+                            idagenda: idagenda
+                        }
+                    }, { transaction: tr });
+                }
             }        
 
             //salva na tabela agenda
@@ -275,7 +353,7 @@ exports.salvarAgenda = async (req, res) => {
 exports.fecharAgenda = async (req, res) => {
     var sequelize = model.sequelize;
 
-    const { idagenda,status,desconto,valorcabelo,valorbarba,total } = req.body;
+    const { idagenda,status,desconto,valorcabelo,valorbarba,total, idusuario } = req.body;
 
     let transacao;
 
@@ -290,6 +368,14 @@ exports.fecharAgenda = async (req, res) => {
                 "valorbarba": valorbarba,
                 "total": total
             }        
+
+            //salva na tabela historico
+            await model.Historico.update(dados, {
+                where: {
+                    idusuario: idusuario,
+                    idagenda: idagenda
+                }
+            }, { transaction: tr });
 
             //salva na tabela agenda
             await model.Agenda.update(dados, {
@@ -434,6 +520,89 @@ exports.deleteHorarios = async (req, res, next) => {
         return res.send('Falha no cadastro');
     }
 
+};
+
+exports.getAgendarDatas = (req, res) => {
+
+    var sequelize = model.sequelize;
+    const Op = model.Sequelize.Op;
+
+    const id = req.params.id;
+
+    var inicialData = dataInicialFormatada();
+    var finalData = dataFinalFormatada();
+
+    
+    model.Agenda.findAll({
+        
+        where: {
+            idprofissional: id,
+            situacao: true,
+            data:{
+                [Op.between]: [inicialData, finalData]
+            }
+        },
+        attributes: [
+            [sequelize.fn('max', sequelize.col('id')), 'id'],
+            [sequelize.fn('max', sequelize.col('idprofissional')), 'idprofissional'],
+            [sequelize.fn('bool_or', sequelize.col('cadusuario')), 'cadusuario'],
+            [sequelize.fn('max', sequelize.col('idusuario')), 'idusuario'],
+            [sequelize.fn('max', sequelize.col('nome')), 'nome'],
+            [sequelize.col('data'), 'data'],
+            [sequelize.fn('max', sequelize.col('horario')), 'horario'],
+            [sequelize.fn('max', sequelize.col('datacons')), 'datacons'],
+            [sequelize.fn('max', sequelize.col('status')), 'status'],
+            [sequelize.fn('bool_or', sequelize.col('situacao')), 'situacao'],
+            [sequelize.fn('bool_or', sequelize.col('cabelo')), 'cabelo'],
+            [sequelize.fn('bool_or', sequelize.col('barba')), 'barba'],          
+            [sequelize.fn('max', sequelize.col('desconto')), 'desconto'],
+            [sequelize.fn('max', sequelize.col('valorcabelo')), 'valorcabelo'],
+            [sequelize.fn('max', sequelize.col('valorbarba')), 'valorbarba'],
+            [sequelize.fn('max', sequelize.col('total')), 'total'],
+            [sequelize.fn('bool_or', sequelize.col('caixa')), 'caixa'],     
+
+            // [
+            //     sequelize.literal(`(select count(id) from agenda where agenda.idprofissional=${id} 
+            //         and agenda.data='2020-04-16' and agenda.situacao=true)`), 'disponivel'
+            // ]
+
+        ],
+        group: ['data'],
+        order: ['data'],
+        raw: true
+    }).then((data) => {
+
+        res.send(data);
+
+    }).catch((error) => {
+        console.log(error);
+        res.send(error);
+    });
+};
+
+exports.getAgendarHorarios = (req, res) => {
+
+    const id = req.params.id;
+    const data = req.params.data;
+
+    model.Agenda.findAll({
+        include: [
+            { model: model.Usuarios },         
+        ],
+        where: {
+            idprofissional: id,
+            data: data,
+            situacao: true
+        },
+        order: ['horario'],
+    }).then((dados) => {
+
+        res.send(dados);        
+
+    }).catch((error) => {
+        console.log(error);
+        res.send(error);
+    });
 };
 
 exports.gerarHorarios = async (req, res) => {
@@ -648,3 +817,25 @@ exports.gerarHorarios = async (req, res) => {
     }
 
 };
+
+function dataInicialFormatada() {
+    var data = new Date(),
+        dia = data.getDate().toString(),
+        diaF = (dia.length == 1) ? '0' + dia : dia,
+        mes = (data.getMonth() + 1).toString(), //+1 pois no getMonth Janeiro começa com zero.
+        mesF = (mes.length == 1) ? '0' + mes : mes,
+        anoF = data.getFullYear();
+    return anoF + "-" + mesF + "-" + diaF;
+}
+
+function dataFinalFormatada() {
+    var data = new Date();
+    data.setDate(data.getDate() + 90);
+
+     var   dia = data.getDate().toString(),
+        diaF = (dia.length == 1) ? '0' + dia : dia,
+        mes = (data.getMonth() + 1).toString(), //+1 pois no getMonth Janeiro começa com zero.
+        mesF = (mes.length == 1) ? '0' + mes : mes,
+        anoF = data.getFullYear();
+    return anoF + "-" + mesF + "-" + diaF;
+}

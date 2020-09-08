@@ -75,3 +75,34 @@ exports.salvaUsuarios = (req, res) => {
             res.send(error);
         });
 };
+
+exports.updateUsuarios = (req, res) => {
+
+    const dados = req.body;
+
+    let dadosAcesso = {
+        "idusuarios": req.body.id,
+        "login": req.body.login,
+        "senha": req.body.senha
+    }
+
+    //Salva na tabela acesso
+    model.Acesso.update(dadosAcesso, {
+        where: {
+            idusuarios: req.body.id
+        }
+    });
+
+    model.Usuarios
+        .update(dados, {
+            where: {
+                id: req.body.id
+            }
+        })
+        .then((data) => {
+            res.send(true);
+        }).catch((error) => {
+            console.log(error);
+            res.send(error);
+        });
+};

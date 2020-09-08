@@ -20,6 +20,7 @@ const models = [
     '../src/modules/modprofissional/cabeleireiros/model/cabeleireiros-model',
     '../src/modules/modprofissional/profissional/model/profissional-model',
     '../src/modules/modprofissional/tabela/model/tabela-model',
+    '../src/modules/modusuarios/historico/model/historico-model',    
     '../src/modules/modusuarios/usuarios/model/usuarios-model',    
 ];
 

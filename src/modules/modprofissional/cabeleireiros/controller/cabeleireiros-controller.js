@@ -25,6 +25,31 @@ exports.getCabeleireiros = (req, res) => {
     });
 };
 
+exports.getCabeleireirosCidade = (req, res) => {
+
+    const cidade = req.params.cidade;    
+
+    model.Profissional.findAll({
+        include: [
+            { model: model.Estados },
+            { model: model.Cidades },
+         
+        ],
+        where: {
+            idcidade: cidade,
+            pendente: false
+        },
+        order: ['salao']
+    }).then((data) => {
+
+        res.send(data);
+
+    }).catch((error) => {
+        console.log(error);
+        res.send(error);
+    });
+};
+
 exports.saveCabeleireiros = async (req, res, next) => {
     var sequelize = model.sequelize;
 

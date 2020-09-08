@@ -14,6 +14,7 @@ const agendaservicos = require('../src/modules/modprofissional/agendaservicos/ag
 const cabeleireiros = require('../src/modules/modprofissional/cabeleireiros/cabeleireiros');
 const profissional = require('../src/modules/modprofissional/profissional/profissional');
 const tabela = require('../src/modules/modprofissional/tabela/tabela');
+const historico = require('../src/modules/modusuarios/historico/historico');
 const usuarios = require('../src/modules/modusuarios/usuarios/usuarios');
 
 const app = express();
@@ -41,6 +42,7 @@ agendaservicos.init(app);
 cabeleireiros.init(app);
 profissional.init(app);
 tabela.init(app);
+historico.init(app);
 usuarios.init(app);
 
 //Quanto não encontrar nenhuma rota

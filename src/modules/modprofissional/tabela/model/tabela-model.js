@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
             through: 'agendaservicos',
             foreignKey: 'idtabela'            
         });
+        
     }
 
     return Tabela

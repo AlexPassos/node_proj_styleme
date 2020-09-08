@@ -6,6 +6,7 @@ const router = express.Router();
 const controller = require('../controller/cabeleireiros-controller');
 
 router.get('/styleme/cabeleireiros/listCabeleireiros/:codigo', controller.getCabeleireiros);
+router.get('/styleme/cabeleireiros/listCabeleireirosCidade/:cidade', controller.getCabeleireirosCidade);
 router.post('/styleme/cabeleireiros/saveCabeleireiros', controller.saveCabeleireiros);
 router.post('/styleme/cabeleireiros/updateCabeleireiros', controller.updateCabeleireiros);
 router.delete('/styleme/cabeleireiros/deleteCabeleireiro', controller.deleteCabeleireiros);
