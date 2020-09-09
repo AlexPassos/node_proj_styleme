@@ -112,7 +112,8 @@ exports.postRegistrarProfissional = async (req, res, next) => {
             let dadosAcesso = {
                 "idprofissional": idp,
                 "login": usuario,
-                "senha": senha
+                "senha": senha,
+                "email": email
             }
 
             //Salva na tabela acesso
@@ -185,7 +186,8 @@ exports.postRegistrarUsuario = async (req, res, next) => {
             let dadosAcesso = {
                 "idusuarios": idu,
                 "login": usuario,
-                "senha": senha
+                "senha": senha,
+                "email": email
             }
 
             //Salva na tabela acesso

@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         idprofissional: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             field: 'idprofissional',
             references: {
                 model: 'Profissional',
@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
         senha: {
             type: DataTypes.STRING,
             field: 'senha'
+        },
+        email: {
+            type: DataTypes.STRING,
+            field: 'email'
         },
 
     }, {
