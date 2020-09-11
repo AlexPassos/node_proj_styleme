@@ -10,7 +10,7 @@ exports.postAutenticacao = (req, res) => {
     model.Acesso.findAll({
         include: [
             { model: model.Usuarios, include: [{ model: model.Estados }, { model: model.Cidades }] },
-            { model: model.Profissional, include: [{ model: model.Estados }, { model: model.Cidades }] },
+            { model: model.Profissional, include: [{ model: model.Estados }, { model: model.Cidades }] },            
         ],
         where: {
             login: login,

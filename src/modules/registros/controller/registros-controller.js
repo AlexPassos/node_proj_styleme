@@ -5,10 +5,15 @@ const model = require('../../../../bin/modelLoader');
 
 exports.getRegistros = (req, res) => {
 
+    const id = req.params.id;
+
     model.Registros.findAll({
         include: [
             { model: model.Profissional }
-        ]
+        ],
+        where: {
+            idprofissional: id,
+        }
     }).then((data) => {
 
         res.send(data);
@@ -76,7 +81,7 @@ exports.postRegistrarProfissional = async (req, res, next) => {
     const situacao = true;
     const acesso = false;
     const nivel = true;
-    const pendente = false;
+    const dependente = false;
 
     var datacad = dataAtualFormatada();
 
@@ -99,7 +104,7 @@ exports.postRegistrarProfissional = async (req, res, next) => {
                 "situacao": situacao,
                 "acesso": acesso,
                 "nivel": nivel,
-                "pendente": pendente,
+                "dependente": dependente,
             }
 
             let idp;
@@ -117,20 +122,16 @@ exports.postRegistrarProfissional = async (req, res, next) => {
             }
 
             //Salva na tabela acesso
-            await model.Acesso.create(dadosAcesso, { transaction: t });
-
-            let dadosRegistros = {
-                "idprofissional": idp,
-                "codigo": codigo,
-                "data": datacad
-            }
-            //Salva na tabela registros
-            await model.Registros.create(dadosRegistros, { transaction: t });
+            let ida;
+            await model.Acesso.create(dadosAcesso, { transaction: t }).then(function(ac){
+                ida = ac.dataValues.id;
+            });
 
             let dadosTabela = {
                 "idprofissional": idp,
                 "cabelo": 0,
-                "barba": 0
+                "barba": 0,
+                "codigo": codigo
             }
             //Salva na tabela tabela de preços
             await model.Tabela.create(dadosTabela, { transaction: t });

@@ -37,7 +37,7 @@ exports.getCabeleireirosCidade = (req, res) => {
         ],
         where: {
             idcidade: cidade,
-            pendente: false
+            dependente: false
         },
         order: ['salao']
     }).then((data) => {
@@ -55,7 +55,7 @@ exports.saveCabeleireiros = async (req, res, next) => {
 
     const { nome, salao, email, idestado, idcidade, usuario, senha, situacao, nivel, codigo, cabelo, barba } = req.body;
     const acesso = true;
-    const pendente = true;
+    const dependente = true;
     const pj = 1;
 
     var datacad = dataAtualFormatada();
@@ -79,7 +79,7 @@ exports.saveCabeleireiros = async (req, res, next) => {
                 "situacao": situacao,
                 "acesso": acesso,
                 "nivel": nivel,
-                "pendente": pendente,
+                "dependente": dependente,
             }
 
             let idp;
@@ -101,7 +101,8 @@ exports.saveCabeleireiros = async (req, res, next) => {
             let dadosTabela = {
                 "idprofissional": idp,
                 "cabelo": cabelo,
-                "barba": barba
+                "barba": barba,
+                "codigo": codigo
             }
             //Salva na tabela tabela de preços
             await model.Tabela.create(dadosTabela, { transaction: t });

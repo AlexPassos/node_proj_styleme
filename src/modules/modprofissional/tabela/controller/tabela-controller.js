@@ -25,15 +25,19 @@ exports.getTabela = (req, res) => {
 
 exports.updateTabela = (req, res) => {
 
-    // const {id, nascimento, sexo, cpfcnpj, rgie, telefone, cep, endcereco, numero,
-    //         complemento, bairro, pj, acesso, pasta} = req.body;
-    const dados = req.body;
-    console.log(req.body);
+     const {id,cabelo, barba, codigo} = req.body;
+    //const dados = req.body;
+    //console.log(req.body);
+
+    let dados = {
+        "cabelo": cabelo,
+        "barba": barba
+    }
 
     model.Tabela
         .update(dados, {
             where: {
-                id: req.body.id
+                codigo: codigo
             }
         })
         .then((data) => {

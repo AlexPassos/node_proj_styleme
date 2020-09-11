@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             field: 'id'
         },
         idprofissional: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             field: 'idprofissional',
             references: {
                 model: 'Profissional',
@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DECIMAL(10, 2),
             field: 'barba'
         },
+        codigo: {
+            type: DataTypes.STRING,
+            field: 'codigo'
+        },
     }, {
         freezeTableName: true,
         schema: 'public',
@@ -34,10 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     })
     Tabela.associate = function (model) {
         Tabela.belongsTo(model.Profissional, { targetKey: 'id', foreignKey: 'idprofissional' })
-        Tabela.belongsToMany(model.Agendaservicos, {
-            through: 'agendaservicos',
-            foreignKey: 'idtabela'            
-        });
+     
         
     }
 

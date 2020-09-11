@@ -117,9 +117,17 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             field: 'nivel'
         },
-        pendente: {
+        dependente: {
             type: DataTypes.BOOLEAN,
-            field: 'pendente'
+            field: 'dependente'
+        },
+        registro: {
+            type: DataTypes.BOOLEAN,
+            field: 'registro'
+        },
+        pagamento: {
+            type: DataTypes.BOOLEAN,
+            field: 'pagamento'
         },
     }, {
         freezeTableName: true,
@@ -131,10 +139,7 @@ module.exports = (sequelize, DataTypes) => {
     Profissional.associate = function (model) {        
         Profissional.belongsTo(model.Estados, {targetKey: 'id', foreignKey: 'idestado' })
         Profissional.belongsTo(model.Cidades, {targetKey: 'id', foreignKey: 'idcidade' })
-        Profissional.belongsToMany(model.Registros, {
-            through: 'registros',
-            foreignKey: 'idprofissional'            
-        });
+       
         Profissional.belongsToMany(model.Acesso, {
             through: 'acesso',
             foreignKey: 'idprofissional'            

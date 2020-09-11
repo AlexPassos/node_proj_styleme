@@ -48,6 +48,7 @@ module.exports = (sequelize, DataTypes) => {
     Acesso.associate = function (model) {
         Acesso.belongsTo(model.Usuarios, { targetKey: 'id', foreignKey: 'idusuarios' })
         Acesso.belongsTo(model.Profissional, { targetKey: 'id', foreignKey: 'idprofissional' })
+     
 
     }
 

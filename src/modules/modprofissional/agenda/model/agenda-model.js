@@ -99,10 +99,7 @@ module.exports = (sequelize, DataTypes) => {
       targetKey: "id",
       foreignKey: "idprofissional",
     });
-    Agenda.belongsToMany(model.Agendaservicos, {
-      through: "agendaservicos",
-      foreignKey: "idagenda",
-    });
+ 
   };
 
   return Agenda;
