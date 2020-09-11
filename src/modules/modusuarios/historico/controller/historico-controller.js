@@ -15,7 +15,7 @@ exports.getHistorico = (req, res) => {
         where: {
             idusuario: id,            
         },
-        order: [['data', 'DESC']],
+        order: [['id', 'DESC']],
     }).then((dados) => {
 
         res.send(dados);        

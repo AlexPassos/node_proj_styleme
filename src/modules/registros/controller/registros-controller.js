@@ -77,7 +77,7 @@ exports.getLoginCadastro = (req, res) => {
 
 exports.postRegistrarProfissional = async (req, res, next) => {
     var sequelize = model.sequelize;
-    const { nome, salao, email, celular, idestado, idcidade, usuario, senha, codigo } = req.body;
+    const { nome, salao, email, celular, idestado, idcidade, usuario, senha, codigo, apelido } = req.body;
     const situacao = true;
     const acesso = false;
     const nivel = true;
@@ -105,6 +105,7 @@ exports.postRegistrarProfissional = async (req, res, next) => {
                 "acesso": acesso,
                 "nivel": nivel,
                 "dependente": dependente,
+                "apelido": apelido
             }
 
             let idp;
@@ -153,7 +154,7 @@ exports.postRegistrarProfissional = async (req, res, next) => {
 
 exports.postRegistrarUsuario = async (req, res, next) => {
     var sequelize = model.sequelize;
-    const { nome, email, telefone, nascimento, sexo, idestado, idcidade, usuario, senha } = req.body;
+    const { nome, email, telefone, nascimento, sexo, idestado, idcidade, usuario, senha, apelido } = req.body;
     const situacao = true;
 
     var datacad = dataAtualFormatada();
@@ -174,7 +175,8 @@ exports.postRegistrarUsuario = async (req, res, next) => {
                 "login": usuario,
                 "senha": senha,
                 "situacao": situacao,
-                "datacad": datacad
+                "datacad": datacad,
+                "apelido": apelido
             }
 
             let idu;

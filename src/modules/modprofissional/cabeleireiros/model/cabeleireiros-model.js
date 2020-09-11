@@ -129,6 +129,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             field: 'pagamento'
         },
+        apelido: {
+            type: DataTypes.STRING,
+            field: 'apelido'
+        },
     }, {
         freezeTableName: true,
         schema: 'public',

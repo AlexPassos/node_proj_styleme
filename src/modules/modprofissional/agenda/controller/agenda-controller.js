@@ -120,6 +120,8 @@ exports.getAgendaHorarios = (req, res) => {
 
 exports.getAgendamentos = (req, res) => {
 
+    const Op = model.Sequelize.Op;
+
     const id = req.params.id;
 
     var inicialData = dataInicialFormatada();
@@ -133,10 +135,10 @@ exports.getAgendamentos = (req, res) => {
         where: {
             idusuario: id,        
             data:{
-                '$between': [inicialData, finalData]
+                [Op.between]: [inicialData, finalData]
             }    
         },
-        order: ['horario'],
+        order: ['data','horario'],
     }).then((dados) => {
 
         res.send(dados);        

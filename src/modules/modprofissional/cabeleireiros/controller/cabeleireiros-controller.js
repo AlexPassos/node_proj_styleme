@@ -53,7 +53,7 @@ exports.getCabeleireirosCidade = (req, res) => {
 exports.saveCabeleireiros = async (req, res, next) => {
     var sequelize = model.sequelize;
 
-    const { nome, salao, email, idestado, idcidade, usuario, senha, situacao, nivel, codigo, cabelo, barba } = req.body;
+    const { nome, salao, email, idestado, idcidade, usuario, senha, situacao, nivel, codigo, cabelo, barba, apelido } = req.body;
     const acesso = true;
     const dependente = true;
     const pj = 1;
@@ -80,6 +80,7 @@ exports.saveCabeleireiros = async (req, res, next) => {
                 "acesso": acesso,
                 "nivel": nivel,
                 "dependente": dependente,
+                "apelido": apelido
             }
 
             let idp;

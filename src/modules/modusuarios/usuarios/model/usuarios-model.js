@@ -61,6 +61,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             field: 'datacad'
         },
+        apelido: {
+            type: DataTypes.STRING,
+            field: 'apelido'
+        },
     }, {
         freezeTableName: true,
         schema: 'public',
